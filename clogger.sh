@@ -36,8 +36,11 @@ fi
 
 source "$contest"
 
-# turn on or off verbose debug logs
-debugon="true"
+# Initialize debugon based on the presence of the -d flag
+debugon="false"
+if [ $# -gt 0 ] && [ "$1" == "-d" ]; then
+  debugon="true"
+fi
 debuglog="./debug"
 echo "" > "$debuglog"
 
