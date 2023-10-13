@@ -6,9 +6,11 @@ mystate="OH"
 myskcc="22449"
 
 # you MUST include ONE contest config to set contest specific
-# variables.  NOTE, anything set in the contest
+# variables. You can manually specify it here, or if it is
+# not set, you will be provided with a menu at start time.
+# NOTE, anything set in the contest
 # config will override settings in this file
-contest="./contests/default.cfg"
+# contest="./contests/default.cfg"
 
 #LotW Info
 # The password on your LotW cert (if none, leave as "")

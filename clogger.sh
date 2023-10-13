@@ -942,6 +942,38 @@ mainloop() {
 initkeys
 qsocount=0
 serial=1
+
+# If $contest isn't set in config file, display a menu and select
+if [ -z "$contest" ]; then
+  # Define the contests directory
+  contests_dir="./contests"
+
+  # List all .cfg files in the contests directory
+  contest_files=($(ls "$contests_dir"/*.cfg 2>/dev/null))
+
+  # Check if there are any contest files
+  if [ ${#contest_files[@]} -eq 0 ]; then
+    echo "No contest configuration files found in $contests_dir."
+    exit 1
+  fi
+
+  # Present a menu for selecting a contest configuration file
+  PS3="Select a contest configuration file: "
+  select contest_file in "${contest_files[@]}"; do
+    if [ -n "$contest_file" ]; then
+      # Set the $contest variable to the chosen file
+      contest="$contest_file"
+      echo "Selected contest configuration file: $contest"
+      break
+    else
+      echo "Invalid choice. Please select a valid option."
+    fi
+  done
+else
+    echo "\$contest is already set to: $contest"
+    sleep 1
+fi
+
 #set serial and log count based on loginfo
 if test -f "./.loginfo-$contestname"; then
   debug "getting qso count and serial from loginfo"
