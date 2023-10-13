@@ -11,6 +11,9 @@ debugon="true"
 debuglog="./debug"
 echo "" > "$debuglog"
 
+#FIFO location
+folder="./fifo"
+
 # This function reads keys, including special function keys
 readkey() {
   debug "${FUNCNAME[0]}"
@@ -774,6 +777,7 @@ drawbuff() {
 
 drawstatus() {
   debug "${FUNCNAME[0]}"
+  prev_status=$status
   if [[ $(type -t get_mults) == "function" ]]
   then
     get_mults
@@ -781,12 +785,33 @@ drawstatus() {
   else
     status="Mode: $mode $logmode  Speed: $speed Freq: $freq Call: $mycall QSO: $qsocount Serial: $serial"
   fi
-  tput sc
-  clearline $statusline
-  tput bold
-  echo "$status"
-  tput sgr0
-  tput rc
+  #Only update the status bar/fifo if it has changed 
+  if [[ $status != $prev_status ]]
+  then
+    #Display status bar if it's enabled:
+    if [[ $statusbar != "false" ]]
+    then
+      tput sc
+      clearline $statusline
+      tput bold
+      echo "$status"
+      tput sgr0
+      tput rc
+    fi
+
+    #If FIFO is enabled, write status values to files
+    if [[ "$fifo" == "true" ]] 
+    then
+      echo "$mode" > "$folder/mode"
+      echo "$logmode" > "$folder/logmode"
+      echo "$speed" > "$folder/speed"
+      echo "$freq" > "$folder/freq"
+      echo "$mycall" > "$folder/mycall"
+      echo "$qsocount" > "$folder/qsocount"
+      echo "$serial" > "$folder/serial"
+      echo "$status" > "$folder/statusbar"
+    fi
+  fi
 }
 
 drawsubmenu() {
@@ -823,6 +848,18 @@ mainloop() {
     echo "<ADIF_VER:4>1.00" >> "$logfile"
     echo "<EOH>" >> "$logfile"
   fi
+  #Create or remove fifo folder if enabled
+  if [[ "$fifo" == "true" ]] 
+  then
+    if [[ ! -d "$folder" ]]; then
+      mkdir "$folder"
+    fi
+  else
+    #Note the fifo folders are not deleted at
+    #shutdown to avoid breaking tmux bars.
+    #Delete it if it has been explicitly disabled.
+    rm -rf "$folder"
+  fi
   band=""
   freq=""
   if [ "$userig" == "true" ]
@@ -836,9 +873,16 @@ mainloop() {
   subbuff=""
   lastaction=""
   dupe="false"
+
+  if [[ $statusbar == "true" ]]; then
+    loc=1
+  else
+    loc=0
+  fi
   statusline=0
-  lastactionline=1
-  menuline=2
+  lastactionline=$((0 + loc))
+  menuline=$((1 + loc)) 
+
   cqpid=""
   temp_exchange="$myexchange"
   if [ "$config_version" != "$clogger_version" ]

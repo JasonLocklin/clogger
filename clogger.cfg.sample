@@ -52,6 +52,12 @@ rigctl="./rigctl"
 # command to execute keyer
 keyer="python keyer.py"
 
+# enable fifo
+fifo="false"
+
+# show statusbar
+statusbar="true"
+
 if [ -z ${station_call} ]
 then
   station_call="$mycall"
