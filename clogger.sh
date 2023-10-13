@@ -1,4 +1,14 @@
 #!/bin/bash
+#
+# Clogger - A lightweight ham radio contest logger written entirely in bash shell
+#
+#
+# See Readme.md for configuration and usage instructions.
+#
+# For more information and updates, visit: https://github.com/etamme/clogger
+#
+
+clogger_version="1"
 
 # Set some defaults in case they are not in the cfg
 modes=("CW" "SSB" "FT8")
@@ -25,7 +35,6 @@ then
 fi
 
 source "$contest"
-clogger_version="1"
 
 # turn on or off verbose debug logs
 debugon="true"
