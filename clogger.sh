@@ -1,8 +1,29 @@
 #!/bin/bash
 
+# Set some defaults in case they are not in the cfg
+modes=("CW" "SSB" "FT8")
+mode_index=0
+mode=${modes[0]}
+myagn="?"
+rigctl="./rigctl"
+keyer="python keyer.py"
+fifo="false"
+statusbar="true"
+
 # load config elements
-#source clogger.cfg
 source clogger.cfg
+
+if [ -z ${station_call} ]
+then
+  station_call="$mycall"
+fi
+
+if ! [[ "${modes[*]}" =~ "CW" ]]
+then
+  usekeyer="false"
+  cwdevice=""
+fi
+
 source "$contest"
 clogger_version="1"
 

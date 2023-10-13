@@ -58,13 +58,3 @@ fifo="false"
 # show statusbar
 statusbar="true"
 
-if [ -z ${station_call} ]
-then
-  station_call="$mycall"
-fi
-
-if [ "$mode" != "CW" ]
-then
-  usekeyer="false"
-  cwdevice=""
-fi
